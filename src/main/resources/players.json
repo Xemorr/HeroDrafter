@@ -1,0 +1,28 @@
+[
+  {
+    "id": 230336110637744131,
+    "champions": [
+      "Brimstone",
+      "Jett",
+      "Killjoy",
+      "Phoenix",
+      "Raze",
+      "Sage"
+    ],
+    "elo": 1438,
+    "preference": [
+      "Duelist",
+      "Sentinel",
+      "Healer",
+      "Smoker",
+      "Flasher"
+    ],
+    "roleElo": {
+      "Duelist": 1300,
+      "Healer": 1300,
+      "Sentinel": 1300,
+      "Smoker": 1300,
+      "Flasher": 1300
+    }
+  }
+]

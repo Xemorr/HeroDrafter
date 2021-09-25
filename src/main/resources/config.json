@@ -1,0 +1,106 @@
+{
+  "heroes": [
+    {
+      "name": "Raze",
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Sage",
+      "roles": [
+        "Healer",
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Reyna",
+      "roles": [
+        "Duelist",
+        "Flasher"
+      ]
+    },
+    {
+      "name": "Killjoy",
+      "roles": [
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Breach",
+      "roles": [
+        "Flasher"
+      ]
+    },
+    {
+      "name": "Omen",
+      "roles": [
+        "Smoker"
+      ]
+    },
+    {
+      "name": "Jett",
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Skye",
+      "roles": [
+        "Healer",
+        "Flasher"
+      ]
+    },
+    {
+      "name": "Yoru",
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Astra",
+      "roles": [
+        "Smoker"
+      ]
+    },
+    {
+      "name": "KAY/O",
+      "roles": [
+        "Flasher"
+      ]
+    },
+    {
+      "name": "Brimstone",
+      "roles": [
+        "Smoker"
+      ]
+    },
+    {
+      "name": "Phoenix",
+      "roles": [
+        "Duelist",
+        "Flasher"
+      ]
+    },
+    {
+      "name": "Sova",
+      "roles": [
+        "Duelist",
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Viper",
+      "roles": [
+        "Smoker",
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Cypher",
+      "roles": [
+        "Sentinel"
+      ]
+    }
+  ]
+}
