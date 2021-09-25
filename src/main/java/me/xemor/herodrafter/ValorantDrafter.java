@@ -14,7 +14,7 @@ public class ValorantDrafter {
     public static DataManager dataManager;
 
     public static void main(String[] args) throws InterruptedException, LoginException {
-        JDA jda = JDABuilder.createDefault("ODY4OTcwOTEzMzUyMjY5ODY0.YP3aOg._Nm3nyj_Up2nzKBmbwBJZpxj4Ek")
+        JDA jda = JDABuilder.createDefault(args[0])
                 .addEventListeners(new CommandListener())
                 .build();
         dataManager = new DataManager();
