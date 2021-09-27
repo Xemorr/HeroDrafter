@@ -85,7 +85,6 @@
     {
       "name": "Sova",
       "roles": [
-        "Duelist",
         "Sentinel"
       ]
     },
@@ -102,5 +101,71 @@
         "Sentinel"
       ]
     }
+  ],
+  "admins": [
+    218805815413440523,
+    230336110637744131,
+    318867161735102465,
+    826152480551338026
+  ],
+  "color": 16744448,
+  "profile_created": "Your profile has been created successfully, %user_name%!",
+  "already_has_profile": "%user_name%, you have already created a profile!",
+  "need_profile": "%user_name%, you need to create a profile! Please execute /profile create <heroes> with the heroes you own!",
+  "invalid_permissions": "%user_name%, you do not have permission to run this command!",
+  "join_queue_message": "%user_name% has joined the queue!",
+  "leave_queue_message": "%user_name% has leave the queue!",
+  "new_preferences": "%user_name% has selected preferences: %preferences%",
+  "invalid_preferences": "Your preferences are invalid! Ensure you have included all the roles, spelt them correctly, and haven't included commas!",
+  "invalid_hero_name": "You have entered an invalid hero name! Ensure it has been spelt correctly.",
+  "successfully_added_hero": "You have successfully added %hero_name% to your playable heroes!",
+  "successfully_removed_hero": "You have successfully removed %hero_name% from your playable heroes!",
+  "missing_roles": "You have not included all the roles in your hero pool!",
+  "empty_queue_message": "The queue is empty. Consider joining it!",
+  "no_matches_ongoing": "There aren't any ongoing matches at the moment! Consider getting one started",
+  "queue_vc_message": "An error has occurred! Ensure you are in a voice channel!",
+  "default_player": {
+    "id": 0,
+    "champions": [
+      "Brimstone",
+      "Jett",
+      "Phoenix",
+      "Sova",
+      "Sage"
+    ],
+    "elo": 1300,
+    "preference": [
+      "Duelist",
+      "Sentinel",
+      "Healer",
+      "Smoker",
+      "Flasher"
+    ],
+    "role_elo": {
+      "Duelist": 1300,
+      "Healer": 1300,
+      "Sentinel": 1300,
+      "Smoker": 1300,
+      "Flasher": 1300
+    }
+  },
+  "compositions": [
+    [
+      "Healer",
+      "Duelist",
+      "Flasher",
+      "Smoker",
+      "Sentinel"
+    ]
+  ],
+  "maps": [
+    "Breeze",
+    "Fracture",
+    "Ascent",
+    "Split",
+    "Bind",
+    "Breeze",
+    "Icebox",
+    "Haven"
   ]
 }

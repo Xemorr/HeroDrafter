@@ -7,17 +7,16 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class DataManager {
 
-    private final Multimap<String, Hero> rolesToHeroes = HashMultimap.create();
+    private final Multimap<Hero, String> heroToRoles = HashMultimap.create();
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final Map<String, Hero> registeredHeroes = new HashMap<>();
+    private Config config;
     private final Map<Long, Player> registeredPlayers = new TreeMap<>();
 
     public DataManager() {
@@ -41,7 +40,7 @@ public class DataManager {
     }
 
     public void defaultResource(String resourcePath)  {
-        if (!new File(resourcePath).exists()) {
+        if (!new File(resourcePath.substring(1)).exists()) {
             try {
                 byte[] rawConfig = DataManager.class.getResourceAsStream(resourcePath).readAllBytes();
                 FileOutputStream fileOutputStream = new FileOutputStream(resourcePath.substring(1));
@@ -57,11 +56,11 @@ public class DataManager {
     public void loadConfig() throws IOException {
         FileReader reader = new FileReader("config.json");
         Gson gson = new Gson();
-        Config config = gson.fromJson(reader, Config.class);
+        config = gson.fromJson(reader, Config.class);
         for (Hero hero : config.getHeroes()) {
             List<String> roles = hero.getRoles();
             for (String role : roles) {
-                rolesToHeroes.put(role, hero);
+                heroToRoles.put(hero, role);
             }
             registeredHeroes.put(hero.getName(), hero);
         }
@@ -78,5 +77,49 @@ public class DataManager {
         }
         reader.close();
     }
+    
+    public Future<?> savePlayers() {
+        List<Player> players = registeredPlayers.values().stream().map(Player::new).collect(Collectors.toList());
+        return threadPool.submit(() -> {
+            try {
+                Gson gson = new Gson();
+                String rawJSON = gson.toJson(players);
+                FileWriter fileWriter = new FileWriter("players.json");
+                fileWriter.write(rawJSON);
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
+    public void setPlayer(Player player) {
+        registeredPlayers.put(player.getId(), player);
+    }
+
+    public Optional<Player> getPlayer(long id) {
+        return Optional.ofNullable(registeredPlayers.get(id));
+    }
+
+    /**
+     * @return A collection of players sorted in ascending ID order
+     */
+    public Collection<Player> getPlayers() {
+        return registeredPlayers.values();
+    }
+
+    public Collection<String> getRoles() { return new HashSet<>(heroToRoles.values());}
+
+    public boolean hasRole(Hero hero, String role) {
+        return heroToRoles.containsEntry(hero, role);
+    }
+
+    public Optional<Hero> getHero(String heroName) {
+        return Optional.ofNullable(registeredHeroes.get(heroName));
+    }
+
+    public Config getConfig() {
+        return config;
+    }
 }
