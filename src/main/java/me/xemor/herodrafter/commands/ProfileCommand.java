@@ -23,6 +23,7 @@ public class ProfileCommand implements Command {
         User user = e.getUser();
         switch (e.getSubcommandName()) {
             case "view" -> viewProfile(e);
+            case "adminview" -> viewAdminProfile(e);
             case "preferences" -> changePreferences(e);
             case "leaderboard" -> viewLeaderboard(e);
             case "create" -> createProfile(e);
@@ -30,6 +31,31 @@ public class ProfileCommand implements Command {
             case "force-add" -> executeIfPrivileged(e, this::addHero);
             case "remove" -> removeHero(e);
             case "force-remove" -> executeIfPrivileged(e, this::removeHero);
+        }
+    }
+
+    public void viewAdminProfile(SlashCommandEvent e) {
+        OptionMapping option = e.getOption("user");
+        User user = option == null ? e.getUser() : option.getAsUser();
+        InteractionHook hook = e.getHook();
+        DataManager dataManager = HeroDrafter.getDataManager();
+        Optional<Player> optionalPlayer = dataManager.getPlayer(user.getIdLong());
+        if (optionalPlayer.isPresent()) {
+            Player player = optionalPlayer.get();
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle(user.getName() + "'s profile");
+            embedBuilder.setColor(dataManager.getConfig().getColor());
+            embedBuilder.setDescription("Player Statistics");
+            embedBuilder.addField("Mean Rating", String.valueOf(Math.round(player.getElo())), true);
+            embedBuilder.addField("Rating Standard Deviation", String.valueOf(Math.round(player.getStandardDeviation())), true);
+            List<String> heroes = player.getHeroes();
+            heroes.sort(String::compareTo);
+            String heroList = heroes.stream().reduce((string1, string2) -> string1 + "\n" + string2).get();
+            embedBuilder.addField("Heroes", heroList, true);
+            embedBuilder.addField("Preferences", player.getPreferences().stream().reduce((string1, string2) -> string1 + "\n" + string2).get(), true);
+            hook.sendMessageEmbeds(embedBuilder.build()).queue();
+        } else {
+            hook.sendMessage(dataManager.getConfig().getNeedProfileMessage().replace("%user_name%", user.getName())).queue();
         }
     }
 
@@ -45,7 +71,7 @@ public class ProfileCommand implements Command {
             embedBuilder.setTitle(user.getName() + "'s profile");
             embedBuilder.setColor(dataManager.getConfig().getColor());
             embedBuilder.setDescription("Player Statistics");
-            embedBuilder.addField("Overall Elo", String.valueOf(Math.round(player.getElo())), true);
+            embedBuilder.addField("Overall Elo", String.valueOf(Math.round(player.getRating().getPublicRating())), true);
             List<String> heroes = player.getHeroes();
             heroes.sort(String::compareTo);
             String heroList = heroes.stream().reduce((string1, string2) -> string1 + "\n" + string2).get();
@@ -81,7 +107,7 @@ public class ProfileCommand implements Command {
             for (Player player : players) {
                 Optional<User> leaderboardUser = users.stream().filter((user -> user.getIdLong() == player.getId())).findAny();
                 if (leaderboardUser.isEmpty()) continue;
-                eloList.append(Math.round(player.getElo())).append("\n");
+                eloList.append(Math.round(player.getRating().getPublicRating())).append("\n");
                 playerList.append(leaderboardUser.get().getName()).append("\n");
             }
             embedBuilder.addField("Ranking", playerList.toString(), true);

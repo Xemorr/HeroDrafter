@@ -133,21 +133,15 @@
       "Sova",
       "Sage"
     ],
-    "elo": 1300,
+    "elo": 1500,
+    "standard_deviation": 500,
     "preference": [
       "Duelist",
       "Sentinel",
       "Healer",
       "Smoker",
       "Flasher"
-    ],
-    "role_elo": {
-      "Duelist": 1300,
-      "Healer": 1300,
-      "Sentinel": 1300,
-      "Smoker": 1300,
-      "Flasher": 1300
-    }
+    ]
   },
   "compositions": [
     [
@@ -167,5 +161,12 @@
     "Breeze",
     "Icebox",
     "Haven"
-  ]
+  ],
+  "true_skill": {
+    "mean": 1500,
+    "beta": 250,
+    "draw_probability": 0.05,
+    "dynamics_factor": 5,
+    "standard_deviation": 500
+  }
 }

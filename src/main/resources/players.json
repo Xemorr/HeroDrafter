@@ -1,54 +1,21 @@
 [
-
-  {
-    "id": 230336110637744131,
-    "champions": [
-      "Brimstone",
-      "Jett",
-      "Killjoy",
-      "Phoenix",
-      "Raze",
-      "Sage"
-    ],
-    "elo": 1438,
-    "preference": [
-      "Duelist",
-      "Sentinel",
-      "Healer",
-      "Smoker",
-      "Flasher"
-    ],
-    "role_elo": {
-      "Duelist": 1300,
-      "Healer": 1300,
-      "Sentinel": 1300,
-      "Smoker": 1300,
-      "Flasher": 1300
-    }
-  },
   {
     "id": -1,
-    "elo": 1000,
+    "elo": 1250,
+    "standard_deviation": 500,
     "heroes": [
-      "Brimstone",
-      "Jett",
-      "Phoenix",
       "Sova",
+      "Brimstone",
+      "Phoenix",
+      "Jett",
       "Sage"
     ],
     "preferences": [
       "Duelist",
-      "Sentinel",
       "Healer",
+      "Sentinel",
       "Smoker",
       "Flasher"
-    ],
-    "role_elo": {
-      "Duelist": 1000,
-      "Flasher": 1000,
-      "Healer": 1000,
-      "Sentinel": 1000,
-      "Smoker": 1000
-    }
+    ]
   }
 ]

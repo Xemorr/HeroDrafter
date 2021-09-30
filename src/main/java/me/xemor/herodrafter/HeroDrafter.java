@@ -39,6 +39,9 @@ public class HeroDrafter {
         SubcommandData viewSubCommandData = new SubcommandData("view", "Allows you to see the profile of others, or yourself!");
         viewSubCommandData.addOption(OptionType.USER, "user", "The user to see the profile of.", false);
 
+        SubcommandData adminViewSubCommandData = new SubcommandData("adminview", "Allows you to see the profile of others, or yourself!");
+        adminViewSubCommandData.addOption(OptionType.USER, "user", "The user to see the profile of.", false);
+
         SubcommandData leaderboardSubCommandData = new SubcommandData("leaderboard", "Allows you to see the elo rankings!");
 
         SubcommandData preferencesSubCommandData = new SubcommandData("preferences", "Allows you to change your preferences");
@@ -59,7 +62,7 @@ public class HeroDrafter {
         forceRemoveSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to remove!", true);
 
         commandData.addSubcommands(viewSubCommandData, leaderboardSubCommandData, preferencesSubCommandData, createSubCommandData,
-                addSubCommandData, forceAddSubCommandData, removeSubCommandData, forceRemoveSubCommandData);
+                addSubCommandData, forceAddSubCommandData, removeSubCommandData, forceRemoveSubCommandData, adminViewSubCommandData);
         return commandData;
     }
 

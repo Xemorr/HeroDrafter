@@ -43,7 +43,6 @@ public class MatchHandler {
         }
         int iterations = 0;
         long smallestEloDifference = Long.MAX_VALUE;
-        double smallestStandardDeviationDifference = Double.MAX_VALUE;
         Match bestMatch = null;
         while (iterations < 200) {
             iterations++;
@@ -52,13 +51,10 @@ public class MatchHandler {
             List<Player> team2Players = pool.subList(pool.size() / 2, pool.size());
             long team2EloSum = Math.round(team2Players.stream().map(Player::getElo).reduce(Double::sum).get());
             long eloDifference = Math.abs(team1EloSum - team2EloSum);
-            if (eloDifference <= smallestEloDifference) {
+            if (eloDifference < smallestEloDifference) {
                 Match newMatch = new Match(new Team(team1Players, roleComposition), new Team(team2Players, roleComposition));
-                if (newMatch.getStandardDeviationDifference() < smallestStandardDeviationDifference || eloDifference < smallestEloDifference) {
-                    smallestStandardDeviationDifference = newMatch.getStandardDeviationDifference();
-                    smallestEloDifference = eloDifference;
-                    bestMatch = newMatch;
-                }
+                smallestEloDifference = eloDifference;
+                bestMatch = newMatch;
             }
             Collections.shuffle(pool);
         }

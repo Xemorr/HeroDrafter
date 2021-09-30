@@ -1,6 +1,7 @@
 package me.xemor.herodrafter;
 
 import com.google.gson.annotations.SerializedName;
+import me.xemor.herodrafter.match.TrueSkill.TrueSkill;
 
 import java.util.List;
 import java.util.Set;
@@ -66,6 +67,13 @@ public class Config {
     private String queueVCErrorMessage;
 
     private List<List<String>> compositions;
+
+    @SerializedName(value = "true_skill")
+    private TrueSkill trueSkill;
+
+    public TrueSkill getTrueSkill() {
+        return trueSkill;
+    }
 
     public String getQueueVCErrorMessage() {
         return queueVCErrorMessage;

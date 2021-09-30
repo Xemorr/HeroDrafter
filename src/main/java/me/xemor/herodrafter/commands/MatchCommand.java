@@ -6,9 +6,12 @@ import me.xemor.herodrafter.match.MatchException;
 import me.xemor.herodrafter.match.MatchHandler;
 import me.xemor.herodrafter.match.Team;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
+
+import java.util.concurrent.CompletableFuture;
 
 public class MatchCommand implements Command, ButtonHandler {
 
@@ -33,8 +36,8 @@ public class MatchCommand implements Command, ButtonHandler {
         try {
             Match match = HeroDrafter.getMatchHandler().draftMatch(matchSize);
             e.getHook().sendMessageEmbeds(match.generateGameEmbed(), match.generateTeamEmbed(match.getTeam1(), "A"), match.generateTeamEmbed(match.getTeam2(), "B"))
-                    .addActionRow(net.dv8tion.jda.api.interactions.components.Button.primary("TeamARoundWin" + match.getTimestamp(), "Team A Round Win").withEmoji(Emoji.fromUnicode("\uD83C\uDD70"))
-                            , net.dv8tion.jda.api.interactions.components.Button.primary("TeamBRoundWin" + match.getTimestamp(), "Team B Round Win").withEmoji(Emoji.fromUnicode("\uD83C\uDD71")),
+                    .addActionRow(Button.primary("TeamARoundWin" + match.getTimestamp(), "Team A Round Win").withEmoji(Emoji.fromUnicode("\uD83C\uDD70"))
+                            ,Button.primary("TeamBRoundWin" + match.getTimestamp(), "Team B Round Win").withEmoji(Emoji.fromUnicode("\uD83C\uDD71")),
                             Button.danger("MatchEnd" + match.getTimestamp(), "End the Match").withEmoji(Emoji.fromUnicode("\uD83D\uDC40"))).queue();
             HeroDrafter.getMatchHandler().playMatch(match);
         } catch (MatchException ex) {
@@ -52,18 +55,23 @@ public class MatchCommand implements Command, ButtonHandler {
         switch (id) {
             case "TeamARoundWin" -> roundWin(e, match, true);
             case "TeamBRoundWin" -> roundWin(e, match, false);
-            case "MatchEnd" -> { e.getMessage().delete().queue(); HeroDrafter.getMatchHandler().endMatch(match); }
+            case "MatchEnd" -> matchEnd(e, match);
         }
     }
 
     public void roundWin(ButtonClickEvent e, Match match, boolean teamA) {
         Team winningTeam;
-        Team losingTeam;
-        if (teamA) {winningTeam = match.getTeam1(); losingTeam = match.getTeam2();}
-        else {winningTeam = match.getTeam2(); losingTeam = match.getTeam1();}
-        match.roundWin(winningTeam, losingTeam);
+        if (teamA) { winningTeam = match.getTeam1(); }
+        else { winningTeam = match.getTeam2(); }
+        match.roundWin(winningTeam);
         e.editMessageEmbeds(match.generateGameEmbed(), e.getMessage().getEmbeds().get(1), e.getMessage().getEmbeds().get(2)).queue();
-        HeroDrafter.getDataManager().savePlayers();
+    }
+
+    public void matchEnd(ButtonClickEvent e, Match match) {
+        match.endMatch();
+        MessageEmbed embed = match.generateEloChangesEmbed(e.getJDA());
+        e.getMessage().editMessageEmbeds(embed).setActionRows().queue();
+        HeroDrafter.getMatchHandler().endMatch(match);
     }
 
 

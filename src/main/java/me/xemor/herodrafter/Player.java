@@ -9,12 +9,12 @@ public class Player implements Comparable<Player> {
 
     private long id;
     private double elo;
+    @SerializedName(value = "standard_deviation")
+    private double standardDeviation;
     @SerializedName(value = "heroes", alternate = "champions")
     private List<String> heroes;
     @SerializedName(value = "preferences", alternate = "preference")
     private List<String> preference;
-    @SerializedName(value = "role_elo")
-    private Map<String, Integer> roleElo;
 
     /**
      * Do not use, here for use in deserialisation.
@@ -26,15 +26,23 @@ public class Player implements Comparable<Player> {
         this.elo = player.elo;
         this.heroes = new ArrayList<>(player.heroes);
         this.preference = new ArrayList<>(player.preference);
-        this.roleElo = new TreeMap<>(player.roleElo);
+        this.standardDeviation = player.standardDeviation;
     }
 
-    public Player(long id, double elo, List<String> heroes, List<String> preferences, Map<String, Integer> roleElo) {
+    public Player(long id, double elo, double standardDeviation, List<String> heroes, List<String> preferences) {
         this.id = id;
         this.elo = elo;
         this.heroes = heroes;
         this.preference = preferences;
-        this.roleElo = roleElo;
+        this.standardDeviation = standardDeviation;
+    }
+
+    public double getStandardDeviation() {
+        return standardDeviation;
+    }
+
+    public void setStandardDeviation(double standardDeviation) {
+        this.standardDeviation = standardDeviation;
     }
 
     public List<String> getPreferences() {
@@ -43,14 +51,6 @@ public class Player implements Comparable<Player> {
 
     public void setPreference(List<String> preference) {
         this.preference = preference;
-    }
-
-    public Map<String, Integer> getRoleElo() {
-        return roleElo;
-    }
-
-    public void setRoleElo(Map<String, Integer> roleElo) {
-        this.roleElo = roleElo;
     }
 
     public long getId() {
@@ -69,12 +69,34 @@ public class Player implements Comparable<Player> {
         this.elo = elo;
     }
 
+    public void setRating(Rating rating) {
+        this.elo = rating.getMean();
+        this.standardDeviation = rating.getStandardDeviation();
+    }
+
+    public Rating getRating() {
+        return new Rating(elo, standardDeviation);
+    }
+
     public List<String> getHeroes() {
         return heroes;
     }
 
     public void setHeroes(List<String> heroes) {
         this.heroes = heroes;
+    }
+
+    public double getWinChance(Player other) {
+        double ratingDifference = other.elo - this.elo;
+        double denominator = 1D + Math.pow(10D, (ratingDifference / 2 * HeroDrafter.getDataManager().getConfig().getTrueSkill().getDrawProbability()));
+        return 1D / (denominator);
+    }
+
+    public double eloDuel(Player player, double actualScore) {
+        double expectedWinChance = getWinChance(player);
+        double k = 15;
+        double ratingChange = k * (expectedWinChance - actualScore);
+        return this.elo + ratingChange;
     }
 
     @Override
@@ -93,6 +115,38 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(@NotNull Player o) {
-        return Double.compare(elo, o.elo);
+        return Double.compare(new Rating(this.elo, this.standardDeviation).getPublicRating(),
+                new Rating(o.elo, o.standardDeviation).getPublicRating());
+    }
+
+    public static class Rating {
+
+        private double mean;
+        private double standardDeviation;
+
+        public Rating(double mean, double standardDeviation) {
+            this.mean = mean;
+            this.standardDeviation = standardDeviation;
+        }
+
+        public double getMean() {
+            return mean;
+        }
+
+        public void setMean(double mean) {
+            this.mean = mean;
+        }
+
+        public double getStandardDeviation() {
+            return standardDeviation;
+        }
+
+        public void setStandardDeviation(double standardDeviation) {
+            this.standardDeviation = standardDeviation;
+        }
+
+        public double getPublicRating() {
+            return mean - (3 * standardDeviation);
+        }
     }
 }
