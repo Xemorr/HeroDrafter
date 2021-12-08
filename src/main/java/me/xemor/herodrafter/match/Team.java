@@ -5,6 +5,7 @@ import me.xemor.herodrafter.Player;
 import me.xemor.herodrafter.HeroDrafter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Team {
 
@@ -40,12 +41,16 @@ public class Team {
             }
             team.remove(topPlayer);
             Player finalTopPlayer = topPlayer;
-            heroes.put(topPlayer, topPlayer.getHeroes().stream()
+            List<String> legalHeroes = topPlayer.getHeroes().stream()
                     .filter((heroName) -> !heroes.containsValue(heroName))
                     .filter((heroName) -> dataManager.getHero(heroName).get().getRoles().contains(role))
-                    .findAny().orElseThrow(() -> new MatchException("Could not find valid hero for " + finalTopPlayer.getId()
-                            + ". Previously selected heroes: " + heroes.values().stream().reduce((string1, string2) -> string1 + " " + string2)
-                    + ". Role composition: " + roleComposition.stream().reduce((string1, string2) -> string1 + " " + string2))));
+                    .collect(Collectors.toList());
+            if (legalHeroes.size() == 0)
+                throw new MatchException("Could not find valid hero for " + finalTopPlayer.getId()
+                        + ". Previously selected heroes: " + heroes.values().stream().reduce((string1, string2) -> string1 + " " + string2)
+                        + ". Role composition: " + roleComposition.stream().reduce((string1, string2) -> string1 + " " + string2));
+            Collections.shuffle(legalHeroes);
+            heroes.put(topPlayer, legalHeroes.get(0));
         }
         return heroes;
     }
