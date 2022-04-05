@@ -114,7 +114,7 @@
   "need_profile": "%user_name%, you need to create a profile! Please execute /profile create <heroes> with the heroes you own!",
   "invalid_permissions": "%user_name%, you do not have permission to run this command!",
   "join_queue_message": "%user_name% has joined the queue!",
-  "leave_queue_message": "%user_name% has leave the queue!",
+  "leave_queue_message": "%user_name% has left the queue!",
   "new_preferences": "%user_name% has selected preferences: %preferences%",
   "invalid_preferences": "Your preferences are invalid! Ensure you have included all the roles, spelt them correctly, and haven't included commas!",
   "invalid_hero_name": "You have entered an invalid hero name! Ensure it has been spelt correctly.",
