@@ -12,25 +12,25 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ProfileCommand implements Command {
 
     @Override
     public void executeCommand(SlashCommandEvent e) {
-        OptionMapping optionMapping = e.getOption("user");
-        InteractionHook hook = e.getHook();
-        User user = e.getUser();
         switch (e.getSubcommandName()) {
             case "view" -> viewProfile(e);
             case "adminview" -> viewAdminProfile(e);
             case "preferences" -> changePreferences(e);
-            case "leaderboard" -> viewLeaderboard(e);
+            case "leaderboard" -> viewLeaderboard(e, Player.Rating::getPublicRating);
+            case "adminleaderboard" -> executeIfPrivileged(e, (SlashCommandEvent event) -> viewLeaderboard(event, Player.Rating::getMean));
+            case "confidenceleaderboard" -> executeIfPrivileged(e, (SlashCommandEvent event) -> viewLeaderboard(event, Player.Rating::getStandardDeviation));
             case "create" -> createProfile(e);
             case "add" -> addHero(e);
-            case "force-add" -> executeIfPrivileged(e, this::addHero);
+            case "force-add" -> executeIfPrivileged(e, this::forciblyAddHero);
             case "remove" -> removeHero(e);
-            case "force-remove" -> executeIfPrivileged(e, this::removeHero);
+            case "force-remove" -> executeIfPrivileged(e, this::forciblyRemoveHero);
         }
     }
 
@@ -83,7 +83,7 @@ public class ProfileCommand implements Command {
         }
     }
 
-    public void viewLeaderboard(SlashCommandEvent e) {
+    public void viewLeaderboard(SlashCommandEvent e, Function<Player.Rating, Double> elo) {
         InteractionHook hook = e.getHook();
         DataManager dataManager = HeroDrafter.getDataManager();
         List<Player> players = new ArrayList<>(dataManager.getPlayers());
@@ -107,7 +107,7 @@ public class ProfileCommand implements Command {
             for (Player player : players) {
                 Optional<User> leaderboardUser = users.stream().filter((user -> user.getIdLong() == player.getId())).findAny();
                 if (leaderboardUser.isEmpty()) continue;
-                eloList.append(Math.round(player.getRating().getPublicRating())).append("\n");
+                eloList.append(Math.round(elo.apply(player.getRating()))).append("\n");
                 playerList.append(leaderboardUser.get().getName()).append("\n");
             }
             embedBuilder.addField("Ranking", playerList.toString(), true);
@@ -139,7 +139,14 @@ public class ProfileCommand implements Command {
     }
 
     public void addHero(SlashCommandEvent e) {
-        User user = e.getUser();
+        addHeroToUser(e.getUser(), e);
+    }
+
+    public void forciblyAddHero(SlashCommandEvent e) {
+        removeHeroFromUser(e.getOption("user").getAsUser(), e);
+    }
+
+    public void addHeroToUser(User user, SlashCommandEvent e) {
         InteractionHook hook = e.getHook();
         Optional<Player> optionalPlayer = HeroDrafter.getDataManager().getPlayer(user.getIdLong());
         if (optionalPlayer.isPresent()) {
@@ -161,7 +168,14 @@ public class ProfileCommand implements Command {
     }
 
     public void removeHero(SlashCommandEvent e) {
-        User user = e.getUser();
+        removeHeroFromUser(e.getUser(), e);
+    }
+
+    public void forciblyRemoveHero(SlashCommandEvent e) {
+        removeHeroFromUser(e.getOption("user").getAsUser(), e);
+    }
+
+    public void removeHeroFromUser(User user, SlashCommandEvent e) {
         InteractionHook hook = e.getHook();
         Optional<Player> optionalPlayer = HeroDrafter.getDataManager().getPlayer(user.getIdLong());
         if (optionalPlayer.isPresent()) {

@@ -43,6 +43,8 @@ public class HeroDrafter {
         adminViewSubCommandData.addOption(OptionType.USER, "user", "The user to see the profile of.", false);
 
         SubcommandData leaderboardSubCommandData = new SubcommandData("leaderboard", "Allows you to see the elo rankings!");
+        SubcommandData adminLeaderboard = new SubcommandData("adminleaderboard", "Allows you to see the true elo rankings!");
+        SubcommandData standardDeviationLeaderboard = new SubcommandData("confidenceleaderboard", "Allows you to see the confidence rankings!");
 
         SubcommandData preferencesSubCommandData = new SubcommandData("preferences", "Allows you to change your preferences");
         preferencesSubCommandData.addOption(OptionType.STRING, "role-preferences", "A space separated list of all the heroes you own", true);
@@ -54,14 +56,17 @@ public class HeroDrafter {
 
         SubcommandData forceAddSubCommandData = new SubcommandData("force-add", "Allows you to forcibly add a hero to another user's profile!");
         forceAddSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to add!", true);
+        forceAddSubCommandData.addOption(OptionType.USER, "user", "The user to add the hero to");
 
         SubcommandData removeSubCommandData = new SubcommandData("remove", "Allows you to remove a hero to your own profile!");
         removeSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to remove!", true);
 
-        SubcommandData forceRemoveSubCommandData = new SubcommandData("force-remove", "Allows you to forcibly remove a hero to another user's profile!");
+        SubcommandData forceRemoveSubCommandData = new SubcommandData("force-remove", "Allows you to forcibly remove a hero from another user's profile!");
         forceRemoveSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to remove!", true);
+        forceRemoveSubCommandData.addOption(OptionType.USER, "user", "The user to remove the hero from");
 
-        commandData.addSubcommands(viewSubCommandData, leaderboardSubCommandData, preferencesSubCommandData, createSubCommandData,
+        commandData.addSubcommands(viewSubCommandData, leaderboardSubCommandData, adminLeaderboard, standardDeviationLeaderboard,
+                preferencesSubCommandData, createSubCommandData,
                 addSubCommandData, forceAddSubCommandData, removeSubCommandData, forceRemoveSubCommandData, adminViewSubCommandData);
         return commandData;
     }

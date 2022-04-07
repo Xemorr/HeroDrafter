@@ -1,7 +1,6 @@
 package me.xemor.herodrafter.commands;
 
 import me.xemor.herodrafter.HeroDrafter;
-import me.xemor.herodrafter.Player;
 import me.xemor.herodrafter.match.Match;
 import me.xemor.herodrafter.match.MatchException;
 import me.xemor.herodrafter.match.MatchHandler;

@@ -146,7 +146,7 @@ public class Player implements Comparable<Player> {
         }
 
         public double getPublicRating() {
-            return mean - (3 * standardDeviation);
+            return Math.max(mean - (3 * standardDeviation), 0);
         }
     }
 }
