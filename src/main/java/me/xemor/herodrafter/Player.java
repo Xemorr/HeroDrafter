@@ -19,6 +19,7 @@ public class Player implements Comparable<Player> {
     /**
      * Do not use, here for use in deserialisation.
      */
+    @Deprecated
     public Player() {}
 
     public Player(Player player) {
@@ -115,8 +116,8 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(@NotNull Player o) {
-        return Double.compare(new Rating(this.elo, this.standardDeviation).getPublicRating(),
-                new Rating(o.elo, o.standardDeviation).getPublicRating());
+        return Double.compare(this.getRating().getPublicRating(),
+                o.getRating().getPublicRating());
     }
 
     public static class Rating {

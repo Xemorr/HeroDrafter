@@ -91,7 +91,7 @@ public class ProfileCommand implements Command {
             hook.sendMessage(HeroDrafter.getDataManager().getConfig().getNeedProfileMessage()).queue();
             return;
         }
-        players.sort(Collections.reverseOrder(Player::compareTo));
+        players.sort(Collections.reverseOrder(Comparator.comparingDouble((Player one) -> elo.apply(one.getRating()))));
         List<RestAction<User>> retriever = new ArrayList<>();
         for (Player player : players) {
             if (player.getId() == -1) continue;
