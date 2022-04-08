@@ -66,11 +66,11 @@ public class HeroDrafter {
         forceRemoveSubCommandData.addOption(OptionType.USER, "user", "The user to remove the hero from", true);
 
         SubcommandData abandoned = new SubcommandData("abandoned", "Allows you to penalize an user for abandoning a match");
-        abandoned.addOption(OptionType.USER)
+        abandoned.addOption(OptionType.USER, "user", "The user to apply the penalty to!");
 
         commandData.addSubcommands(viewSubCommandData, leaderboardSubCommandData, adminLeaderboard, standardDeviationLeaderboard,
                 preferencesSubCommandData, createSubCommandData,
-                addSubCommandData, forceAddSubCommandData, removeSubCommandData, forceRemoveSubCommandData, adminViewSubCommandData);
+                addSubCommandData, forceAddSubCommandData, removeSubCommandData, forceRemoveSubCommandData, adminViewSubCommandData, abandoned);
         return commandData;
     }
 
