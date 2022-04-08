@@ -56,14 +56,17 @@ public class HeroDrafter {
 
         SubcommandData forceAddSubCommandData = new SubcommandData("force-add", "Allows you to forcibly add a hero to another user's profile!");
         forceAddSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to add!", true);
-        forceAddSubCommandData.addOption(OptionType.USER, "user", "The user to add the hero to");
+        forceAddSubCommandData.addOption(OptionType.USER, "user", "The user to add the hero to", true);
 
         SubcommandData removeSubCommandData = new SubcommandData("remove", "Allows you to remove a hero to your own profile!");
         removeSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to remove!", true);
 
         SubcommandData forceRemoveSubCommandData = new SubcommandData("force-remove", "Allows you to forcibly remove a hero from another user's profile!");
         forceRemoveSubCommandData.addOption(OptionType.STRING, "hero", "The name of the hero you want to remove!", true);
-        forceRemoveSubCommandData.addOption(OptionType.USER, "user", "The user to remove the hero from");
+        forceRemoveSubCommandData.addOption(OptionType.USER, "user", "The user to remove the hero from", true);
+
+        SubcommandData abandoned = new SubcommandData("abandoned", "Allows you to penalize an user for abandoning a match");
+        abandoned.addOption(OptionType.USER)
 
         commandData.addSubcommands(viewSubCommandData, leaderboardSubCommandData, adminLeaderboard, standardDeviationLeaderboard,
                 preferencesSubCommandData, createSubCommandData,

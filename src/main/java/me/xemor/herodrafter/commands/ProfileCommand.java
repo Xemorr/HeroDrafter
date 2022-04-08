@@ -31,6 +31,7 @@ public class ProfileCommand implements Command {
             case "force-add" -> executeIfPrivileged(e, this::forciblyAddHero);
             case "remove" -> removeHero(e);
             case "force-remove" -> executeIfPrivileged(e, this::forciblyRemoveHero);
+            case "abandoned" -> executeIfPrivileged(e, this::abandoned);
         }
     }
 
@@ -197,6 +198,19 @@ public class ProfileCommand implements Command {
             }
         } else {
             hook.sendMessage(HeroDrafter.getDataManager().getConfig().getNeedProfileMessage().replace("%user_name%", user.getName())).queue();
+        }
+    }
+
+    public void abandoned(SlashCommandEvent e) {
+        User user = e.getOption("user").getAsUser();
+        Optional<Player> optionalPlayer = HeroDrafter.getDataManager().getPlayer(user.getIdLong());
+        if (optionalPlayer.isPresent()) {
+            Player player = optionalPlayer.get();
+            Player.Rating rating = player.getRating();
+            rating.setStandardDeviation(Math.min(500, rating.getStandardDeviation() + 25));
+            player.setRating(rating);
+            HeroDrafter.getDataManager().savePlayers();
+            e.reply(String.format("%s has been penalized! They have %.0f elo now!", user.getName(), rating.getPublicRating())).queue();
         }
     }
 

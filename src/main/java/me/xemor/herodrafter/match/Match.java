@@ -133,7 +133,7 @@ public class Match {
         StringBuilder eloList = new StringBuilder();
         StringBuilder playerList = new StringBuilder();
         for (Map.Entry<Player, Player.Rating> playerToEloChange : eloChange.entrySet()) {
-            eloList.append(Math.round(playerToEloChange.getValue().getPublicRating())).append("\n");
+            eloList.append(String.format("%.0f", playerToEloChange.getValue().getPublicRating())).append("\n");
             playerList.append("<@").append(playerToEloChange.getKey().getId()).append(">").append("\n");
         }
         embedBuilder.addField("Players", playerList.toString(), true);
@@ -151,8 +151,8 @@ public class Match {
         }
         double averagePublicElo = team.getPlayersToHero().keySet().stream()
                 .map(player -> player.getRating().getPublicRating()).reduce(Double::sum).get() / team.getPlayersToHero().size();
-        embedBuilder.addField("Average Rating", String.valueOf(averagePublicElo), true);
-        embedBuilder.addField("Rating σ", String.valueOf(team.getStandardDeviation()), true);
+        embedBuilder.addField("Average Rating", String.format("%.0f", averagePublicElo), true);
+        embedBuilder.addField("Rating σ", String.format("%.0f", team.getStandardDeviation()), true);
         return embedBuilder.build();
     }
 
