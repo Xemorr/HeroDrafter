@@ -210,7 +210,7 @@ public class ProfileCommand implements Command {
             rating.setStandardDeviation(Math.min(500, rating.getStandardDeviation() + 25));
             player.setRating(rating);
             HeroDrafter.getDataManager().savePlayers();
-            e.reply(String.format("%s has been penalized! They have %.0f elo now!", user.getName(), rating.getPublicRating())).queue();
+            e.getHook().sendMessage(String.format("%s has been penalized! They have %.0f elo now!", user.getName(), rating.getPublicRating())).queue();
         }
     }
 
