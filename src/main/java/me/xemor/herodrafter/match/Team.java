@@ -27,7 +27,7 @@ public class Team {
     }
 
     private Map<Player, String> chooseHeroComposition(List<String> roleComposition, List<Player> team) throws MatchException {
-        Map<Player, String> heroes = new HashMap<>();
+        Map<Player, String> heroes = new LinkedHashMap<>();
         DataManager dataManager = HeroDrafter.getDataManager();
         team = new ArrayList<>(team);
         for (String role : roleComposition) {
