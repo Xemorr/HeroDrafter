@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class Team {
 
     private Map<Player, String> playersToHero;
+    private final List<String> roleComposition;
     private int score;
     private double eloSum;
     private double averageElo;
@@ -18,6 +19,7 @@ public class Team {
 
     public Team(List<Player> players, List<String> roleComposition) throws MatchException {
         playersToHero  = chooseHeroComposition(roleComposition, players);
+        this.roleComposition = roleComposition;
         eloSum = players.stream().map(Player::getElo).reduce(Double::sum).get();
         averageElo = eloSum / playersToHero.size();
         calculateStandardDeviation();
@@ -84,5 +86,9 @@ public class Team {
 
     public double getVarianceSum() {
         return varianceSum;
+    }
+
+    public List<String> getRoleComposition() {
+        return roleComposition;
     }
 }

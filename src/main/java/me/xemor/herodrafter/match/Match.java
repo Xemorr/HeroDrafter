@@ -146,8 +146,10 @@ public class Match {
         embedBuilder.setTitle("Team " + letter);
         embedBuilder.setDescription("Move to your side!");
         embedBuilder.setColor(HeroDrafter.getDataManager().getConfig().getColor());
+        int index = 0;
         for (Map.Entry<Player, String> entry : team.getPlayersToHero().entrySet()) {
-            embedBuilder.addField(entry.getValue(), "<@" + entry.getKey().getId() + ">", true);
+            String role = team.getRoleComposition().get(index++);
+            embedBuilder.addField(String.format("%s (%s - %d)", entry.getValue(), role, entry.getKey().getPreferences().indexOf(role) + 1), "<@" + entry.getKey().getId() + ">", true);
         }
         double averagePublicElo = team.getPlayersToHero().keySet().stream()
                 .map(player -> player.getRating().getPublicRating()).reduce(Double::sum).get() / team.getPlayersToHero().size();
