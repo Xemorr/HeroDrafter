@@ -155,6 +155,7 @@ public class ProfileCommand implements Command {
             String heroes = e.getOption("heroes").getAsString();
             String[] heroNames = heroes.split(" ");
             if (heroes.contains("All")) {
+                player.getHeroes().clear();
                 player.getHeroes().addAll(HeroDrafter.getDataManager().getHeroes().stream().map(Hero::getName).collect(Collectors.toList()));
                 hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyAddedAllHeroesMessage()).queue();
             }
