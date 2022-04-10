@@ -43,6 +43,9 @@ public class Config {
     @SerializedName(value = "successfully_added_hero")
     private String successfullyAddedHeroMessage;
 
+    @SerializedName(value = "added_all_heroes")
+    private String successfullyAddedAllHeroesMessage;
+
     @SerializedName(value = "successfully_removed_hero")
     private String successfullyRemovedHeroMessage;
 
@@ -101,6 +104,10 @@ public class Config {
 
     public String getSuccessfullyAddedHeroMessage() {
         return successfullyAddedHeroMessage;
+    }
+
+    public String getSuccessfullyAddedAllHeroesMessage() {
+        return successfullyAddedAllHeroesMessage;
     }
 
     public String getInvalidHeroName() {

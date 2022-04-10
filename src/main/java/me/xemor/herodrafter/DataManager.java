@@ -119,6 +119,10 @@ public class DataManager {
         return Optional.ofNullable(registeredHeroes.get(heroName));
     }
 
+    public Collection<Hero> getHeroes() {
+        return registeredHeroes.values();
+    }
+
     public Config getConfig() {
         return config;
     }

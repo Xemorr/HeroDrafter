@@ -144,7 +144,7 @@ public class ProfileCommand implements Command {
     }
 
     public void forciblyAddHero(SlashCommandEvent e) {
-        removeHeroFromUser(e.getOption("user").getAsUser(), e);
+        addHeroToUser(e.getOption("user").getAsUser(), e);
     }
 
     public void addHeroToUser(User user, SlashCommandEvent e) {
@@ -152,17 +152,26 @@ public class ProfileCommand implements Command {
         Optional<Player> optionalPlayer = HeroDrafter.getDataManager().getPlayer(user.getIdLong());
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
-            String heroName = e.getOption("hero").getAsString();
-            if (HeroDrafter.getDataManager().getHero(heroName).isPresent()) {
-                if (!player.getHeroes().contains(heroName)) {
-                    player.getHeroes().add(heroName);
-                    HeroDrafter.getDataManager().savePlayers();
-                }
-                hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyAddedHeroMessage().replace("%hero_name%", heroName)).queue();
+            String heroes = e.getOption("heroes").getAsString();
+            String[] heroNames = heroes.split(" ");
+            if (heroes.contains("All")) {
+                player.getHeroes().addAll(HeroDrafter.getDataManager().getHeroes().stream().map(Hero::getName).collect(Collectors.toList()));
+                hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyAddedAllHeroesMessage()).queue();
             }
             else {
-                hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName()).queue();
+                for (String heroName : heroNames) {
+                    if (HeroDrafter.getDataManager().getHero(heroName).isPresent()) {
+                        if (!player.getHeroes().contains(heroName)) {
+                            player.getHeroes().add(heroName);
+                        }
+                        hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyAddedHeroMessage().replace("%hero_name%", heroName)).queue();
+                    }
+                    else {
+                        hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName().replace("%hero_name%", heroName)).queue();
+                    }
+                }
             }
+            HeroDrafter.getDataManager().savePlayers();
         } else {
             hook.sendMessage(HeroDrafter.getDataManager().getConfig().getNeedProfileMessage().replace("%user_name%", user.getName())).queue();
         }
@@ -181,20 +190,23 @@ public class ProfileCommand implements Command {
         Optional<Player> optionalPlayer = HeroDrafter.getDataManager().getPlayer(user.getIdLong());
         if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
-            String heroName = e.getOption("hero").getAsString();
-            Optional<Hero> optionalHero = HeroDrafter.getDataManager().getHero(heroName);
-            if (optionalHero.isPresent()) {
-                if (canRemoveHero(optionalHero.get(), player) && player.getHeroes().size() >= HeroDrafter.getDataManager().getConfig().getDefaultPlayer().getHeroes().size()) {
-                    player.getHeroes().remove(heroName);
-                    HeroDrafter.getDataManager().savePlayers();
-                    hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyRemovedHeroMessage().replace("%hero_name%", heroName)).queue();
+            String heroes = e.getOption("heroes").getAsString();
+            String[] heroNames = heroes.split(" ");
+            for (String heroName : heroNames) {
+                Optional<Hero> optionalHero = HeroDrafter.getDataManager().getHero(heroName);
+                if (optionalHero.isPresent()) {
+                    if (canRemoveHero(optionalHero.get(), player) && player.getHeroes().size() >= HeroDrafter.getDataManager().getConfig().getDefaultPlayer().getHeroes().size()) {
+                        player.getHeroes().remove(heroName);
+                        HeroDrafter.getDataManager().savePlayers();
+                        hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyRemovedHeroMessage().replace("%hero_name%", heroName)).queue();
+                    }
+                    else {
+                        hook.sendMessage(HeroDrafter.getDataManager().getConfig().getMissingRolesMessage()).queue();
+                    }
                 }
                 else {
-                    hook.sendMessage(HeroDrafter.getDataManager().getConfig().getMissingRolesMessage()).queue();
+                    hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName().replace("%hero_name%", heroName)).queue();
                 }
-            }
-            else {
-                hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName()).queue();
             }
         } else {
             hook.sendMessage(HeroDrafter.getDataManager().getConfig().getNeedProfileMessage().replace("%user_name%", user.getName())).queue();
