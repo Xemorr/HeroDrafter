@@ -6,11 +6,11 @@ import me.xemor.herodrafter.match.TrueSkill.DrawMargin;
 import me.xemor.herodrafter.match.TrueSkill.TrueSkill;
 import me.xemor.herodrafter.match.TrueSkill.TruncatedGaussianCorrectionFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class Match {
 
@@ -18,7 +18,7 @@ public class Match {
     private final Team[] teams;
     private final long eloDifference;
     private final String map;
-    private Map<Player, Player.Rating> eloChange = new HashMap<>();
+    private final Map<Player, Player.Rating> eloChange = new HashMap<>();
 
     public Match(Team team1, Team team2) {
         teams = new Team[2];
@@ -125,16 +125,21 @@ public class Match {
         return embedBuilder.build();
     }
 
-    public MessageEmbed generateEloChangesEmbed(JDA jda) {
+    public MessageEmbed generateEloChangesEmbed() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(HeroDrafter.getDataManager().getConfig().getColor());
         embedBuilder.setTitle("The Rating Changes");
         embedBuilder.setDescription("What are the new rankings?");
         StringBuilder eloList = new StringBuilder();
         StringBuilder playerList = new StringBuilder();
-        for (Map.Entry<Player, Player.Rating> playerToEloChange : eloChange.entrySet()) {
-            eloList.append(String.format("%.0f", playerToEloChange.getValue().getPublicRating())).append("\n");
-            playerList.append("<@").append(playerToEloChange.getKey().getId()).append(">").append("\n");
+        // i wish you just used kotlin omg
+        final var newEloSet = eloChange.entrySet().stream()
+                .filter(it -> it.getKey().getId() != -1L)
+                .sorted(Comparator.comparingDouble(it -> it.getValue().getPublicRating()))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), it -> {Collections.reverse(it); return it;}));
+        for (var it : newEloSet) {
+            eloList.append(String.format("%.0f", it.getValue().getPublicRating())).append("\n");
+            playerList.append("<@").append(it.getKey().getId()).append(">").append("\n");
         }
         embedBuilder.addField("Players", playerList.toString(), true);
         embedBuilder.addField("New Rankings", eloList.toString(), true);

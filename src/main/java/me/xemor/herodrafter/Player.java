@@ -16,11 +16,8 @@ public class Player implements Comparable<Player> {
     @SerializedName(value = "preferences", alternate = "preference")
     private List<String> preference;
 
-    /**
-     * Do not use, here for use in deserialisation.
-     */
-    @Deprecated
-    public Player() {}
+    // Should still work with gson even if private, and you cannot accidentally initialise
+    private Player() {}
 
     public Player(Player player) {
         this.id = player.id;
@@ -102,8 +99,7 @@ public class Player implements Comparable<Player> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Player) {
-            Player otherPlayer = (Player) o;
+        if (o instanceof Player otherPlayer) {
             return otherPlayer.id == id;
         }
         return false;
