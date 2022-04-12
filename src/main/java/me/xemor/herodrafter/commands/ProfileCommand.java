@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 
 import java.util.*;
 import java.util.function.Function;
@@ -88,7 +89,7 @@ public class ProfileCommand implements Command {
         InteractionHook hook = e.getHook();
         DataManager dataManager = HeroDrafter.getDataManager();
         List<Player> players = new ArrayList<>(dataManager.getPlayers());
-        if (players.size() == 0) {
+        if (players.isEmpty()) {
             hook.sendMessage(HeroDrafter.getDataManager().getConfig().getNeedProfileMessage()).queue();
             return;
         }
@@ -109,7 +110,8 @@ public class ProfileCommand implements Command {
                 Optional<User> leaderboardUser = users.stream().filter((user -> user.getIdLong() == player.getId())).findAny();
                 if (leaderboardUser.isEmpty()) continue;
                 eloList.append(Math.round(elo.apply(player.getRating()))).append("\n");
-                playerList.append(leaderboardUser.get().getName()).append("\n");
+                playerList.append(MarkdownSanitizer.sanitize(leaderboardUser.get().getName())).append("\n"); //gets rid of md in names
+                // affecting entire leaderboard
             }
             embedBuilder.addField("Ranking", playerList.toString(), true);
             embedBuilder.addField("Elo", eloList.toString(), true);
@@ -166,8 +168,7 @@ public class ProfileCommand implements Command {
                             player.getHeroes().add(heroName);
                         }
                         hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyAddedHeroMessage().replace("%hero_name%", heroName)).queue();
-                    }
-                    else {
+                    } else {
                         hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName().replace("%hero_name%", heroName)).queue();
                     }
                 }
@@ -200,12 +201,10 @@ public class ProfileCommand implements Command {
                         player.getHeroes().remove(heroName);
                         HeroDrafter.getDataManager().savePlayers();
                         hook.sendMessage(HeroDrafter.getDataManager().getConfig().getSuccessfullyRemovedHeroMessage().replace("%hero_name%", heroName)).queue();
-                    }
-                    else {
+                    } else {
                         hook.sendMessage(HeroDrafter.getDataManager().getConfig().getMissingRolesMessage()).queue();
                     }
-                }
-                else {
+                } else {
                     hook.sendMessage(HeroDrafter.getDataManager().getConfig().getInvalidHeroName().replace("%hero_name%", heroName)).queue();
                 }
             }

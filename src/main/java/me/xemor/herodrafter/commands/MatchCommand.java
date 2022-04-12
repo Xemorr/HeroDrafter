@@ -71,7 +71,7 @@ public class MatchCommand implements Command, ButtonHandler {
 
     public void matchEnd(ButtonClickEvent e, Match match) {
         match.endMatch();
-        MessageEmbed embed = match.generateEloChangesEmbed(e.getJDA());
+        MessageEmbed embed = match.generateEloChangesEmbed();
         e.getMessage().editMessageEmbeds(embed).setActionRows().queue();
         HeroDrafter.getMatchHandler().endMatch(match);
     }
