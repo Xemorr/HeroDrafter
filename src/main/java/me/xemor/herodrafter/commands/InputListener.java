@@ -3,6 +3,7 @@ package me.xemor.herodrafter.commands;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,8 @@ import java.util.Map;
 
 public class InputListener extends ListenerAdapter {
 
-    private Map<String, Command> commands = new HashMap<>();
-    private List<ButtonHandler> buttonHandlers = new ArrayList<>();
+    private final Map<String, Command> commands = new HashMap<>();
+    private final List<ButtonHandler> buttonHandlers = new ArrayList<>();
 
     public InputListener() {
         commands.put("profile", new ProfileCommand());
@@ -32,7 +33,7 @@ public class InputListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonClick(ButtonClickEvent e) {
+    public void onButtonClick(@NotNull ButtonClickEvent e) {
         for (ButtonHandler handler : buttonHandlers) {
             handler.handleButton(e);
         }

@@ -18,8 +18,6 @@ public class TrueSkill {
     @SerializedName(value = "standard_deviation")
     private double standardDeviation;
 
-    public TrueSkill() {
-    }
 
     public double getBeta() {
         return beta;
