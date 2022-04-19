@@ -15,6 +15,7 @@ public class Player implements Comparable<Player> {
     private List<String> heroes;
     @SerializedName(value = "preferences", alternate = "preference")
     private List<String> preference;
+    private String name;
 
     // Should still work with gson even if private, and you cannot accidentally initialise
     private Player() {}
@@ -25,6 +26,7 @@ public class Player implements Comparable<Player> {
         this.heroes = new ArrayList<>(player.heroes);
         this.preference = new ArrayList<>(player.preference);
         this.standardDeviation = player.standardDeviation;
+        this.name = player.name;
     }
 
     public Player(long id, double elo, double standardDeviation, List<String> heroes, List<String> preferences) {
@@ -65,6 +67,14 @@ public class Player implements Comparable<Player> {
 
     public void setElo(double elo) {
         this.elo = elo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setRating(Rating rating) {

@@ -4,6 +4,9 @@ import me.xemor.herodrafter.commands.InputListener;
 import me.xemor.herodrafter.match.MatchHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -17,11 +20,18 @@ public class HeroDrafter {
 
     public static void main(String[] args) throws InterruptedException, LoginException {
         JDA jda = JDABuilder.createDefault(args[0])
+                .setEventManager(new AnnotatedEventManager())
                 .addEventListeners(new InputListener())
                 .build();
-        dataManager = new DataManager();
         matchHandler = new MatchHandler();
         jda.awaitReady();
+        dataManager = new DataManager(jda);
+        jda.addEventListener(new Object() {
+            @SubscribeEvent
+            void onNameChange(UserUpdateNameEvent e) {
+                dataManager.getPlayer(e.getUser().getIdLong()).ifPresent(it ->  it.setName(e.getNewName()));
+            }
+        });
         jda.getGuildById(805105435954774066L).updateCommands().addCommands(registerProfileCommand(jda), registerQueueCommand(jda), registerMatchCommand(jda)).queue();
     }
 
