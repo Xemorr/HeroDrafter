@@ -8,8 +8,10 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
+import static net.dv8tion.jda.api.utils.MarkdownSanitizer.sanitize;
 
 public class QueueCommand implements Command {
 
@@ -35,21 +37,16 @@ public class QueueCommand implements Command {
 
     public void viewQueue(SlashCommandEvent e) {
         Deque<Player> queue = HeroDrafter.getMatchHandler().getQueue();
-        List<RestAction<User>> retrieved = new ArrayList<>();
-        queue.forEach((player -> retrieved.add(e.getJDA().retrieveUserById(player.getId()))));
         if (queue.size() == 0) { e.getHook().sendMessage(HeroDrafter.getDataManager().getConfig().getEmptyQueueMessage()).queue(); return; }
-        RestAction.allOf(retrieved).queue((List<User> users) -> {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle("Queue");
-            embedBuilder.setColor(HeroDrafter.getDataManager().getConfig().getColor());
-            String queueStr = users.stream()
-                    .filter(Objects::nonNull)
-                    .map(User::getName)
-                    .reduce((string1, string2) -> string1 + "\n" + string2)
-                    .orElse("");
-            embedBuilder.addField("Queue", queueStr, true);
-            e.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
-        });
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Queue");
+        embedBuilder.setColor(HeroDrafter.getDataManager().getConfig().getColor());
+        String queueStr = queue.stream()
+                .map(Player::getName)
+                .reduce((s1, s2) -> s1 + "\n" + s2)
+                .orElse("");
+        embedBuilder.addField("Queue", sanitize(queueStr), true);
+        e.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
     public void joinQueue(SlashCommandEvent e) {

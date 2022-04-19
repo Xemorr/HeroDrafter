@@ -4,6 +4,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.RestAction;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -13,13 +16,14 @@ import java.util.stream.Collectors;
 
 public class DataManager {
 
+
     private final Multimap<Hero, String> heroToRoles = HashMultimap.create();
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final Map<String, Hero> registeredHeroes = new HashMap<>();
     private Config config;
     private final Map<Long, Player> registeredPlayers = new TreeMap<>();
 
-    public DataManager() {
+    public DataManager(JDA jda) {
         Future<?> configWrite = threadPool.submit(() -> defaultResource("/config.json"));
         Future<?> playersWrite = threadPool.submit(() -> defaultResource("/players.json"));
         try {
@@ -28,7 +32,7 @@ public class DataManager {
             Future<?> loadData = threadPool.submit(() -> {
                 try {
                     loadConfig();
-                    loadPlayers();
+                    loadPlayers(jda);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -67,14 +71,19 @@ public class DataManager {
         reader.close();
     }
 
-    public void loadPlayers() throws IOException {
+    public void loadPlayers(JDA jda) throws IOException {
         FileReader reader = new FileReader("players.json");
         Gson gson = new Gson();
         Type type = new TypeToken<Player[]>(){}.getType();
         Player[] players = gson.fromJson(reader, type);
+        List<RestAction<User>> noName = new ArrayList<>();
         for (Player player : players) {
+            if (player.getName() == null) {
+                noName.add(jda.retrieveUserById(player.getId()));
+            }
             registeredPlayers.put(player.getId(), player);
         }
+        RestAction.allOf(noName).queue(list -> list.forEach(it -> registeredPlayers.get(it.getIdLong()).setName(it.getName())));
         reader.close();
     }
     

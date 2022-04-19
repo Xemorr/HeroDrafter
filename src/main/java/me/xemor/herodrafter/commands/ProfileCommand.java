@@ -94,42 +94,21 @@ public class ProfileCommand implements Command {
             return;
         }
         players.sort(Collections.reverseOrder(Comparator.comparingDouble((Player one) -> elo.apply(one.getRating()))));
-        List<RestAction<User>> retriever = new ArrayList<>();
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(dataManager.getConfig().getColor());
+        embedBuilder.setTitle("Leaderboard");
+        embedBuilder.setDescription("Find out who the ~~luckiest~~ best player is!");
+        StringBuilder eloList = new StringBuilder();
+        StringBuilder playerList = new StringBuilder();
         for (Player player : players) {
             if (player.getId() == -1) continue;
-            retriever.add(e.getJDA().retrieveUserById(player.getId()));
+            eloList.append(Math.round(elo.apply(player.getRating()))).append("\n");
+            playerList.append(MarkdownSanitizer.sanitize(player.getName())).append("\n"); //gets rid of md in names
+            // affecting entire leaderboard
         }
-        /* Earlier the code would perform a filter upon each user in the list 'players'.. this operation
-        is O(n) (even worse because users is bigger than 'players'), and because youre iterating over
-        each player in players this operation ends up being O(n^2). Instead I have made a map that
-        maps id to a User object, which is constructed from iterating over the supplied users list
-        and then used in the for each loop instead of the filter. This is more time efficient at the cost of
-        memory (Long object vs long primitive).
-        The solution is not ideal, but getting rid of the .filter was tough because of the async Restaction shit
-        and i couldnt think of anything better that wouldnt involve writing some thread pool impl
-        */
-        RestAction.allOf(retriever).queue((List<User> users) -> {
-            final Map<Long, User> idUserMap = new HashMap<>();
-            for (var it : users) {
-                idUserMap.put(it.getIdLong(), it);
-            }
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(dataManager.getConfig().getColor());
-            embedBuilder.setTitle("Leaderboard");
-            embedBuilder.setDescription("Find out who the ~~luckiest~~ best player is!");
-            StringBuilder eloList = new StringBuilder();
-            StringBuilder playerList = new StringBuilder();
-            for (Player player : players) {
-                final User leaderboardUser = idUserMap.get(player.getId());
-                if (leaderboardUser == null) continue;
-                eloList.append(Math.round(elo.apply(player.getRating()))).append("\n");
-                playerList.append(MarkdownSanitizer.sanitize(leaderboardUser.getName())).append("\n"); //gets rid of md in names
-                // affecting entire leaderboard
-            }
-            embedBuilder.addField("Ranking", playerList.toString(), true);
-            embedBuilder.addField("Elo", eloList.toString(), true);
-            hook.sendMessageEmbeds(embedBuilder.build()).queue();
-        });
+        embedBuilder.addField("Ranking", playerList.toString(), true);
+        embedBuilder.addField("Elo", eloList.toString(), true);
+        hook.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
     public void changePreferences(SlashCommandEvent e) {
@@ -257,6 +236,7 @@ public class ProfileCommand implements Command {
         if (optionalPlayer.isEmpty()) {
             Player player = new Player(dataManager.getConfig().getDefaultPlayer());
             player.setId(user.getIdLong());
+            player.setName(e.getName());
             dataManager.setPlayer(player);
             hook.sendMessage(dataManager.getConfig().getProfileCreated().replace("%user_name%", user.getName())).queue();
             dataManager.savePlayers();
